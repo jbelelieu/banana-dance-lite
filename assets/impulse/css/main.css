@@ -1,0 +1,392 @@
+html {
+    box-sizing: border-box;
+
+    /*
+    This is a hack. Since we don't rely on Bootstrap's grid completely for this theme,
+    the left/right padding has been removed from the container-fluid class. That causes
+    and overflow. So we make up for this by hiding it. Also used for the mobile menu
+    transition. So yeah, don't remove it unless you like seeing the world burn.
+    */
+    overflow-x: hidden;
+}
+
+*, *:before, *:after {
+    box-sizing: inherit;
+}
+
+body {
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+}
+
+a, a:hover, a:active {
+    text-decoration: none;
+}
+
+a.anchor {
+    display: block;
+    position: relative;
+    top: -64px;
+    visibility: hidden;
+}
+
+#toTop {
+    position: fixed;
+    bottom: 15px;
+    right: 15px;
+    font-size: 11px;
+    font-weight: 200;
+    text-transform: uppercase;
+    z-index: 101;
+}
+
+#expandNav {
+    display: none;
+}
+
+.floatRight {
+    float: right;
+}
+
+.flag {
+    margin-left: 8px;
+}
+
+#topbar {
+    width: 100%;
+    -webkit-box-shadow: 0 2px 9px 0 #222;
+    box-shadow: 0 2px 9px 0 #ccc;
+    line-height: 64px !important;
+    height: 64px;
+    font-family: 'Open Sans', arial, san-serif;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    padding: 0 15px;
+}
+
+#topbar h1 {
+    color: #fff;
+    font-size: 24px;
+    line-height: inherit;
+    font-weight: 200;
+    margin: 0;
+    padding: 0;
+}
+
+#topbar a {
+    color: #fff;
+}
+
+#leftSide, #rightSide {
+    min-height: 100vh;
+    font-family: 'Open Sans', arial, san-serif;
+    padding-top: 64px;
+    font-weight: 200;
+    font-size: 1.1em;
+}
+
+#rightSide p, #rightSide ul {
+    line-height: 1.7em;
+    color: #444;
+}
+
+#leftSide {
+    position: fixed;
+    -webkit-box-shadow: 1px 0 5px 0 rgba(0,0,0,.1);
+    box-shadow: 1px 0 5px 0 rgba(0,0,0,.1);
+    top: 0;
+    left: 0;
+    width: 270px;
+    padding: 79px 15px 0 15px;
+    border-right: 1px solid #ccc;
+    background: #f1f1f1; /* Old browsers */
+    background: -moz-linear-gradient(top,  #f1f1f1 0%, #e1e1e1 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f1f1f1), color-stop(100%,#e1e1e1)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #f1f1f1 0%,#e1e1e1 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #f1f1f1 0%,#e1e1e1 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #f1f1f1 0%,#e1e1e1 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #f1f1f1 0%,#e1e1e1 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f1f1f1', endColorstr='#e1e1e1',GradientType=0 ); /* IE6-9 */
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+#rightSide {
+    padding: 64px 0 0 270px;
+    color: #111;
+}
+
+#rightSide ul {
+    padding: 0 18px;
+    margin: 0 !important;
+}
+
+#rightSide ul li {
+    padding: 0;
+    margin: 0;
+}
+
+/**
+ * Navigation side list.
+ */
+#leftSide ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
+    line-height: 15px;
+}
+
+#leftSide ul li a {
+    padding: 0;
+}
+
+#leftSide ul li {
+    padding: 0;
+}
+
+/**
+ * Headings (folder names)
+ */
+#leftSide ul li span {
+    padding: 4px 0;
+    margin-top: 12px;
+    font-weight: bold;
+    font-size: 0.8em;
+    color: #333;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    text-shadow: 1px 1px 0 #f9f9f9;
+    display: block;
+}
+
+/**
+ * Sub-categories within navigation.
+ */
+#leftSide ul ul {
+    border-left: 0px;
+    border-right: 0px;
+    border-left: 1px solid #ccc;
+    padding-left: 12px;
+    padding-bottom: 0px;
+}
+
+#leftSide ul ul li {
+    padding: 4px 0;
+    font-size: 0.9em;
+}
+
+/**
+ * Primary content padding.
+ */
+.rightInner {
+    padding: 35px;
+}
+
+#rightSide h1 {
+    margin-top: 0px;
+}
+
+#rightSide h1,
+#rightSide h2,
+#rightSide h3,
+#rightSide h4 {
+    font-weight: 200;
+}
+
+h1, h2, h3, h4 {
+    margin-bottom: 8px !important;
+}
+
+p {
+    padding: 0;
+    margin: 0 0 12px 0;
+}
+
+#subnav {
+    line-height: 32px;
+    padding: 3px 32px 0 32px;
+    font-size: 12px;
+    color: #999;
+    border-bottom: 1px dotted #e1e1e1;
+}
+
+#subnav a {
+    color: #999;
+}
+
+#search {
+    margin-bottom: 12px;
+    position: relative;
+}
+
+#search input {
+    width: 100%;
+    padding: 0 42px 0 12px;
+    height: 32px;
+    line-height: 32px;
+}
+
+#search button {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 42px;
+    height: 32px;
+    line-height: 32px;
+}
+
+ul#searchResults {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+ul#searchResults li {
+    padding: 12px 0;
+}
+
+ul#searchResults li:not(:last-child) {
+    border-bottom: 1px solid #f1f1f1;
+}
+
+ul#searchResults li p {
+    font-size: 0.8em;
+    color: #999;
+    margin: 0;
+}
+
+ul#searchResults li p:before,
+ul#searchResults li p:after {
+    content: '...';
+}
+
+ul#searchResults li span {
+    background-color: yellow;
+}
+
+ul#innerHeadings {
+    list-style: none;
+    margin: 0;
+    padding: 6px;
+    float: right;
+    width: 250px;
+    font-size: 12px;
+    line-height: 12px;
+    border: 1px solid #e1e1e1;
+}
+
+ul#innerHeadings li {
+    padding: 4px 4px;
+}
+
+ul#innerHeadings li.h2 {
+    padding: 4px 8px 4px 20px;
+}
+
+ul#innerHeadings li.h3 {
+    padding: 4px 8px 4px 32px;
+}
+
+ul#innerHeadings li.h4 {
+    padding: 4px 8px 4px 44px;
+}
+
+/**
+ * Custom Wiki Styles
+ */
+
+table {
+    width: 100%;
+    border-top: 1px solid #ccc;
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    margin: 24px 0;
+    font-size: 0.9em;
+    padding: 0;
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+
+table th, table td {
+    padding: 7px 12px;
+}
+
+table th {
+    border-bottom: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    background-color: #e1e1e1;
+    white-space: nowrap;
+}
+
+table tr td:last-child {
+    border-right: 1px solid #ccc;
+}
+
+table tr:last-child {
+    border-bottom: 1px solid #ccc;
+}
+
+table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+table tr {
+    border-bottom: 1px solid #ccc;
+}
+
+table td {
+    border-right: 1px solid #e1e1e1;
+}
+
+u {
+    text-decoration: none;
+    background-color: #FFCC00;
+    padding: 0 6px;
+    margin: 0 1px;
+    border-radius: 4px;
+    color: #000;
+    line-height: inherit;
+    display: inline-block;
+}
+
+i {
+    text-decoration: none;
+    font-style: normal;
+    background-color: #66CCFF;
+    padding: 0 6px;
+    margin: 0 1px;
+    border-radius: 4px;
+    color: #000;
+    line-height: inherit;
+    display: inline-block;
+}
+
+code {
+    padding: 24px;
+}
+
+pre, blockquote {
+    border-radius: 0px;
+    margin: 24px 0;
+    border: 1px solid #ccc;
+    text-shadow: 1px 1px 0 #fff;
+    font-size: 13px;
+    padding: 0;
+    font-family: 'Courier', san-serif;
+    height: 400px;
+    overflow: auto;
+    -webkit-box-shadow:inset 1px 1px 10px -5px rgba(0,0,0,.20);
+    box-shadow:inset 1px 1px 10px -5px rgba(0,0,0,.20);
+    background: #f1f1f1; /* Old browsers */
+    background: -moz-linear-gradient(top,  #f1f1f1 0%, #e1e1e1 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f1f1f1), color-stop(100%,#e1e1e1)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #f1f1f1 0%,#e1e1e1 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #f1f1f1 0%,#e1e1e1 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #f1f1f1 0%,#e1e1e1 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #f1f1f1 0%,#e1e1e1 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f1f1f1', endColorstr='#e1e1e1',GradientType=0 ); /* IE6-9 */
+}
