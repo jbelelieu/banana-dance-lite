@@ -1,0 +1,59 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang=""> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>{{ wiki_name }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="{{ wiki_base_url }}/assets/{{ wiki_theme }}/css/main.css">
+    <link rel="stylesheet" href="{{ wiki_base_url }}/assets/{{ wiki_theme }}/css/media.css">
+    <link rel="stylesheet" href="{{ wiki_base_url }}/assets/shared/vendor/bootstrap/bootstrapGrid.min.css">
+
+    <!-- Start: Syntax Highlighting -->
+    <link rel="stylesheet" href="{{ wiki_base_url }}/assets/shared/vendor/highlight/css/default.css">
+    <script src="{{ wiki_base_url }}/assets/shared/vendor/highlight/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <!-- End: Syntax Highlighting -->
+
+    <script type="text/javascript" src="{{ wiki_base_url }}/assets/shared/vendor/jquery/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="{{ wiki_base_url }}/assets/shared/js/mobileMenu.js"></script>
+
+    <style type="text/css">
+        #topbar {
+            background-color: {{ branding_color }};
+        }
+        a {
+            color: {{ branding_color }};
+        }
+    </style>
+
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:400,300' rel='stylesheet' type='text/css'>
+</head>
+<body>
+
+<a name="top"></a>
+<div id="topbar" class="col-xs-12">
+    <div id="expandNav"></div>
+    <h1><a href="index.php">{{ wiki_name }}</a></h1>
+</div>
+
+<div id="leftSide">
+    <div id="search">
+        <form action="{{ wiki_base_url }}" method="get">
+        <input type="text" name="q" value="{{ query }}" /> <button type="submit">Go</button>
+        </form>
+    </div>
+    {{ navigation }}
+</div>
+<div id="rightSide">
+    <div id="subnav">
+        {{ breadcrumbs }}
+        <div class="floatRight">
+        {{ languages }}
+        </div>
+    </div>
+    <div class="rightInner">

@@ -1,0 +1,25 @@
+{
+    "name": "ascadnet/banana_dance_lite",
+    "description": "Rapid deployment wiki with markdown support.",
+    "keywords": ["wiki", "documentation"],
+    "license": "GPL3",
+    "type": "project",
+    "require": {
+        "php": ">=5.3.0",
+        "michelf/php-markdown": "~1.5"
+    },
+    "authors": [
+        {
+            "name": "Jon Belelieu",
+            "email": "jonnyobell@gmail.com"
+        }
+    ],
+    "autoload": {
+      "psr-4": {
+        "App\\": "app/"
+      }
+    },
+    "config": {
+        "preferred-install": "dist"
+    }
+}
