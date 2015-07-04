@@ -9,8 +9,13 @@
  *
  * When building a link, link to the "?l=ROUTE_NAME" page.
  * 
- * @author  j-belelieu
- * @date    7/3/15
+ * @author      j-belelieu
+ * @date        7/3/15
+ * @package     Banana Dance Lite
+ * @link        http://www.bananadance.org/
+ * @link        http://www.bananadance.org/docs/?l=named_routes
+ * @license     GPL-3.0
+ * @link        http://www.opensource.org/licenses/gpl-3.0.html
  */
 
 return array(
