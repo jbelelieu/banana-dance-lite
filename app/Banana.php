@@ -83,7 +83,7 @@ class Banana {
         }
 
         $this->markdown = new Markdown();
-        $this->structure = new Structure();
+        $this->structure = new Structure($page, $category);
         $this->breadcrumbs = new Breadcrumbs();
         $this->view = new View();
 
@@ -178,10 +178,13 @@ class Banana {
      */
     private function getDefaultChanges()
     {
+        $base = \App\getBaseUrl();
+
         return array(
+            'assets' => $base . '/app/views/' . BD_THEME . '/assets',
             'wiki_name' => BD_NAME,
             'wiki_theme' => BD_THEME,
-            'wiki_base_url' => trim(BD_BASE_URL, '/'),
+            'wiki_base_url' => $base,
             'branding_color' => BD_BRANDING_COLOR,
             'languages' => $this->buildLanguages(),
             'query' => '',
@@ -198,11 +201,8 @@ class Banana {
         $languages = '';
 
         $scan = dirname(dirname(__FILE__)) . '/wiki';
+        
         $scan_mirror = dirname(dirname(__FILE__)) . '/app/views/' . BD_THEME;
-
-        $c = (! empty($_GET['c'])) ? htmlentities($_GET['c']) : '';
-
-        $p = (! empty($_GET['p'])) ? htmlentities($_GET['p']) : '';
 
         foreach (scandir($scan) as $item) {
             if (is_dir($scan . '/' . $item) && $item != '.' && $item != '..') {
@@ -211,8 +211,8 @@ class Banana {
                 if (! file_exists($scan_mirror . '/' . $item)) continue;
 
                 $languages .= '<span class="flag">';
-                $languages .= '<a href="' . BD_BASE_URL . '/index.php?c=' . $c . '&p=' . $p . '&lang=' . $item . '">';
-                $languages .= '<img src="' . BD_BASE_URL . '/assets/shared/img/' . $item . '.png" border="0" />';
+                $languages .= '<a href="' . \App\getBaseUrl() . '/index.php?c=' . $this->category . '&p=' . $this->page . '&lang=' . $item . '">';
+                $languages .= '<img src="' . \App\getBaseUrl() . '/app/views/' . BD_THEME . '/assets/img/' . $item . '.png" border="0" />';
                 $languages .= '</a>';
                 $languages .= '</span>';
             }
@@ -240,9 +240,11 @@ class Banana {
             $fileData = file_get_contents($this->file);
             $data = $this->markdown->transform($fileData);
             $data = $this->getInnerHeadings($data);
+            $timestamps = $this->getTimeStamps($this->file);
             $page = 'page';
         } else {
             $data = '';
+            $timestamps = '';
             $innerStructure = '';
             $page = 'error';
         }
@@ -252,6 +254,8 @@ class Banana {
             'innerHeadings' => $this->internalHeadings,
         );
 
+        if (! empty($timestamps)) $changes = array_merge($changes, $timestamps);
+
         $formatted = $this->view
             ->setPage($page)
             ->setChanges(array_merge($this->getDefaultChanges(), $changes))
@@ -260,6 +264,24 @@ class Banana {
         $this->output = $formatted;
 
         return $this;
+    }
+
+
+    /**
+     * Get timestamps on a page.
+     *
+     * @param   string  $file
+     *
+     * @return  array
+     */
+    protected function getTimeStamps($file)
+    {
+        return array(
+            'created' => date(BD_DATE_FORMAT, filectime($file)),
+            'timeSinceCreation' => \App\timeSince(filectime($file)),
+            'modified' => date(BD_DATE_FORMAT, filemtime($file)),
+            'timeSinceModified' => \App\timeSince(filemtime($file)),
+        );
     }
 
 
@@ -282,33 +304,33 @@ class Banana {
 
         foreach ($exp as $line) {
 
-            $aName = uniqid();
-
             $check = substr(trim($line), 0, 4);
 
-            if ($check == '<h4>') {
+            if ($check == '<h1>' || $check == '<h2>' || $check == '<h3>' || $check == '<h4>') {
+
+                switch ($check) {
+                    case '<h1>':
+                        $class = 'h1';
+                        break;
+                    case '<h2>':
+                        $class = 'h2';
+                        break;
+                    case '<h3>':
+                        $class = 'h3';
+                        break;
+                    case '<h4>':
+                        $class = 'h4';
+                        break;
+                }
+
                 $found = true;
-                $title = trim(substr($line, 4));
-                $this->internalHeadings .= '<li class="h4"><a href="#' . $aName . '">' . $title . '</a></li>';
+
+                $aName = str_replace(' ', '_', strtolower(preg_replace("/[^A-Za-z0-9 ]/", '', strip_tags($line))));
+
+                $this->internalHeadings .= '<li class="' . $class . '"><a href="#' . $aName . '">' . trim(substr($line, 4)) . '</a></li>';
+
                 $finalPage .= '<a class="anchor" name="' . $aName . '"></a>' . "\n" . $line . "\n";
-            }
-            else if ($check == '<h3>') {
-                $found = true;
-                $title = trim(substr($line, 4));
-                $this->internalHeadings .= '<li class="h3"><a href="#' . $aName . '">' . $title . '</a></li>';
-                $finalPage .= '<a class="anchor" name="' . $aName . '"></a>' . "\n" . $line . "\n";
-            }
-            else if ($check == '<h2>') {
-                $found = true;
-                $title = trim(substr($line, 4));
-                $this->internalHeadings .= '<li class="h2"><a href="#' . $aName . '">' . $title . '</a></li>';
-                $finalPage .= '<a class="anchor" name="' . $aName . '"></a>' . "\n" . $line . "\n";
-            }
-            else if ($check == '<h1>') {
-                $found = true;
-                $title = trim(substr($line, 4));
-                $this->internalHeadings .= '<li class="h1"><a href="#' . $aName . '">' . $title . '</a></li>';
-                $finalPage .= '<a class="anchor" name="' . $aName . '"></a>' . "\n" . $line . "\n";
+
             }
             else {
                 $finalPage .= $line . "\n";

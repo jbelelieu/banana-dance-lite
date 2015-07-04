@@ -73,3 +73,53 @@ function getLanguage()
 
     return BD_DEFAULT_LANGUAGE;
 }
+
+
+
+/**
+ * Get the base URL to use on the wiki.
+ */
+function getBaseUrl()
+{
+    if (! empty(BD_BASE_URL)) {
+        return BD_BASE_URL;
+    } else {
+        $path = pathinfo($_SERVER['PHP_SELF']);
+
+        if ($path['dirname'] == '/') return '';
+
+        return $path['dirname'];
+    }
+}
+
+
+
+/**
+ * Get the time since a date.
+ *
+ * @param   int     $time   PHP time() value.
+ *
+ * @return  string
+ */
+function timeSince($time)
+{
+    $time = time() - $time;
+
+    $tokens = array (
+        31536000 => 'year',
+        2592000 => 'month',
+        604800 => 'week',
+        86400 => 'day',
+        3600 => 'hour',
+        60 => 'minute',
+        1 => 'second'
+    );
+
+    foreach ($tokens as $unit => $text) {
+        if ($time < $unit) continue;
+
+        $numberOfUnits = floor($time / $unit);
+
+        return $numberOfUnits . ' ' . $text . (($numberOfUnits > 1) ? 's' : '');
+    }
+}

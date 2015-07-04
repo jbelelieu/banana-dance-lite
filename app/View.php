@@ -18,6 +18,7 @@ class View {
      */
     private $file = 'page';
 
+
     /**
      * @var     array   Dynamic substitutions for use within the view.
      */
@@ -45,6 +46,7 @@ class View {
 
         return $this;
     }
+
 
 
     /**
@@ -92,8 +94,13 @@ class View {
      */
     private function getView($view)
     {
+        $theFile = dirname(dirname(__FILE__)) . '/app/views/' . BD_THEME . '/' . \App\getLanguage() . '/' . $view . '.phtml';
+
+        if (! file_exists($theFile))
+            $theFile = dirname(dirname(__FILE__)) . '/app/views/' . BD_THEME . '/en/' . $view . '.phtml';
+
         ob_start();
-        include(dirname(dirname(__FILE__)) . '/app/views/' . BD_THEME . '/' . \App\getLanguage() . '/' . $view . '.phtml');
+        include($theFile);
         $content = ob_get_contents();
         ob_end_clean();
 
@@ -118,6 +125,21 @@ class View {
 
             if (array_key_exists($clean, $this->changes))
                 $content = str_replace($variable, $this->changes[$clean], $content);
+        }
+
+        // Re-do for fixed variables.
+        $fixed = include dirname(dirname(__FILE__)) . '/app/config/custom_variables.php';
+
+        if (! empty($fixed)) {
+            preg_match_all('#\{\{(.*?)\}\}#', $content, $matches);
+
+            foreach ($matches[0] as $variable) {
+                $clean = str_replace('{', '', $variable);
+                $clean = trim(str_replace('}', '', $clean));
+
+                if (array_key_exists($clean, $fixed))
+                    $content = str_replace($variable, $fixed[$clean], $content);
+            }
         }
 
         return $content;

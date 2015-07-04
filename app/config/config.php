@@ -25,4 +25,8 @@ define('BD_BASE_URL', '');
 define('BD_DEFAULT_LANGUAGE', 'en');
 
 // Whether to turn on error reporting during debugging.
-define('BD_DEBUG', true);
+define('BD_DEBUG', false);
+
+// Use PHP's standard date formatting:
+// http://php.net/manual/en/function.date.php
+define('BD_DATE_FORMAT', 'Y/m/d g:ia');

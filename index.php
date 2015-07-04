@@ -22,9 +22,33 @@ require "app/global.php";
  * @link        http://www.opensource.org/licenses/gpl-3.0.html
  */
 
+/*
+ * Is the user requesting a named route?
+ */
+$requestedLink = (! empty($_GET['l'])) ? htmlentities($_GET['l']) : '';
 
+if (! empty($requestedLink)) {
+    $routes = require "app/config/named_routes.php";
+
+    if (array_key_exists($requestedLink, $routes)) {
+        $link = explode('/', $routes[$requestedLink]);
+
+        $page = array_pop($link);
+
+        $category = implode('/', $link);
+
+        header('Location: index.php?p=' . $page . '&c=' . $category);
+        exit;
+    }
+}
+
+/*
+ * Standard usage scenarios.
+ */
 $page = (! empty($_GET['p'])) ? $_GET['p'] : 'index.md';
+
 $category = (! empty($_GET['c'])) ? $_GET['c'] : '';
+
 $lang = (! empty($_GET['lang'])) ? $_GET['lang'] : '';
 
 $banana = new App\Banana($page, $category, $lang);

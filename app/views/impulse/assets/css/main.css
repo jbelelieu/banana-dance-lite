@@ -76,6 +76,10 @@ a.anchor {
     padding: 0;
 }
 
+#rightSide a {
+    color: #2198d6;
+}
+
 #topbar a {
     color: #fff;
 }
@@ -144,6 +148,10 @@ a.anchor {
     padding: 0;
 }
 
+#leftSide ul li.active {
+    font-weight: bold;
+}
+
 #leftSide ul li {
     padding: 0;
 }
@@ -183,7 +191,7 @@ a.anchor {
  * Primary content padding.
  */
 .rightInner {
-    padding: 35px;
+    padding: 24px 35px;
 }
 
 #rightSide h1 {
@@ -365,8 +373,8 @@ i {
     display: inline-block;
 }
 
-code {
-    padding: 24px;
+code, pre.plain {
+    padding: 24px !important;
 }
 
 pre, blockquote {
@@ -377,7 +385,7 @@ pre, blockquote {
     font-size: 13px;
     padding: 0;
     font-family: 'Courier', san-serif;
-    height: 400px;
+    max-height: 400px;
     overflow: auto;
     -webkit-box-shadow:inset 1px 1px 10px -5px rgba(0,0,0,.20);
     box-shadow:inset 1px 1px 10px -5px rgba(0,0,0,.20);
@@ -389,4 +397,13 @@ pre, blockquote {
     background: -ms-linear-gradient(top,  #f1f1f1 0%,#e1e1e1 100%); /* IE10+ */
     background: linear-gradient(to bottom,  #f1f1f1 0%,#e1e1e1 100%); /* W3C */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f1f1f1', endColorstr='#e1e1e1',GradientType=0 ); /* IE6-9 */
+}
+
+
+#timestamps {
+    border-top: 1px dotted #ccc;
+    font-size: 13px;
+    color: #999 !important;
+    margin-top: 24px;
+    padding: 8px 0;
 }
