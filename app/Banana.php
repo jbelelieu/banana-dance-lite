@@ -1,7 +1,5 @@
 <?php namespace App;
 
-use \Michelf\MarkdownExtra as Markdown;
-
 /**
  * This is the primary "Controller" for the application.
  *
@@ -13,12 +11,6 @@ use \Michelf\MarkdownExtra as Markdown;
  * @link        http://www.opensource.org/licenses/gpl-3.0.html
  */
 class Banana {
-
-    /**
-     * @var     Markdown    Class that contains the tool for formatting Markdown.
-     *                      Thank you to Michel Fortin (michelf.ca)!
-     */
-    private $markdown;
 
     /**
      * @var     Structure   Class that builds the directory structure.
@@ -34,11 +26,6 @@ class Banana {
      * @var     View
      */
     private $view;
-
-    /**
-     * @var     array
-     */
-    private $structureArray = array();
 
     /**
      * @var     string
@@ -60,11 +47,6 @@ class Banana {
      */
     private $output;
 
-    /**
-     * @var     string
-     */
-    private $internalHeadings;
-
 
     /**
      * @param   string      $page       Name of the page we are loading.
@@ -82,13 +64,12 @@ class Banana {
             $this->determineLanguage();
         }
 
-        $this->markdown = new Markdown();
         $this->structure = new Structure($page, $category);
         $this->breadcrumbs = new Breadcrumbs();
         $this->view = new View();
+        $this->parsePage = new ParsePage();
 
         $this->buildRequest();
-        $this->getStructure();
     }
 
 
@@ -104,7 +85,9 @@ class Banana {
 
 
     /**
+     * Set the page we are requesting.
      *
+     * @param   string  $page
      */
     public function setPage($page)
     {
@@ -223,35 +206,28 @@ class Banana {
 
 
     /**
-     * Get the directory structure.
-     */
-    protected function getStructure()
-    {
-        $this->structureArray = $this->structure->get();
-    }
-
-
-    /**
      * Render the wiki page the user is trying to load.
      */
     public function wiki()
     {
         if (file_exists($this->file)) {
-            $fileData = file_get_contents($this->file);
-            $data = $this->markdown->transform($fileData);
-            $data = $this->getInnerHeadings($data);
-            $timestamps = $this->getTimeStamps($this->file);
+            $data = $this->parsePage
+                ->setRawData(file_get_contents($this->file))
+                ->process()
+                ->getContent();
+
+            $timestamps = \App\getTimeStamps($this->file);
+
             $page = 'page';
         } else {
             $data = '';
             $timestamps = '';
-            $innerStructure = '';
             $page = 'error';
         }
 
         $changes = array(
             'content' => $data,
-            'innerHeadings' => $this->internalHeadings,
+            'innerHeadings' => $this->parsePage->getHeadings($data),
         );
 
         if (! empty($timestamps)) $changes = array_merge($changes, $timestamps);
@@ -264,85 +240,6 @@ class Banana {
         $this->output = $formatted;
 
         return $this;
-    }
-
-
-    /**
-     * Get timestamps on a page.
-     *
-     * @param   string  $file
-     *
-     * @return  array
-     */
-    protected function getTimeStamps($file)
-    {
-        return array(
-            'created' => date(BD_DATE_FORMAT, filectime($file)),
-            'timeSinceCreation' => \App\timeSince(filectime($file)),
-            'modified' => date(BD_DATE_FORMAT, filemtime($file)),
-            'timeSinceModified' => \App\timeSince(filemtime($file)),
-        );
-    }
-
-
-    /**
-     * Builds a list of page headings for easy access and internal linking.
-     *
-     * @param   string  $fileData   The page's raw (pre-markdown processed) data.
-     *
-     * @return  string  Final page with added <a name> tags.
-     */
-    public function getInnerHeadings($fileData)
-    {
-        $this->internalHeadings = '<ul id="innerHeadings">';
-
-        $finalPage = '';
-
-        $found = false;
-
-        $exp = explode("\n", $fileData);
-
-        foreach ($exp as $line) {
-
-            $check = substr(trim($line), 0, 4);
-
-            if ($check == '<h1>' || $check == '<h2>' || $check == '<h3>' || $check == '<h4>') {
-
-                switch ($check) {
-                    case '<h1>':
-                        $class = 'h1';
-                        break;
-                    case '<h2>':
-                        $class = 'h2';
-                        break;
-                    case '<h3>':
-                        $class = 'h3';
-                        break;
-                    case '<h4>':
-                        $class = 'h4';
-                        break;
-                }
-
-                $found = true;
-
-                $aName = str_replace(' ', '_', strtolower(preg_replace("/[^A-Za-z0-9 ]/", '', strip_tags($line))));
-
-                $this->internalHeadings .= '<li class="' . $class . '"><a href="#' . $aName . '">' . trim(substr($line, 4)) . '</a></li>';
-
-                $finalPage .= '<a class="anchor" name="' . $aName . '"></a>' . "\n" . $line . "\n";
-
-            }
-            else {
-                $finalPage .= $line . "\n";
-            }
-
-        }
-
-        $this->internalHeadings .= '</ul>';
-
-        if (! $found) $this->internalHeadings = '';
-
-        return $finalPage;
     }
 
 

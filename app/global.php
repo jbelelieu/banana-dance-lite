@@ -20,6 +20,7 @@ if (BD_DEBUG) {
 
 $nameMap = require_once dirname(__FILE__) . '/config/structure_names.php';
 
+
 /**
  * Build a link that can be used by the program.
  *
@@ -48,7 +49,7 @@ function findName($page, $lang = '')
 {
     global $nameMap;
 
-    if (empty($lang)) $lang = \App\getLanguage();
+    if (empty($lang)) $lang = getLanguage();
 
     $useMap = $nameMap[$lang];
 
@@ -122,4 +123,24 @@ function timeSince($time)
 
         return $numberOfUnits . ' ' . $text . (($numberOfUnits > 1) ? 's' : '');
     }
+}
+
+
+
+
+/**
+ * Get timestamps for a wiki file.
+ *
+ * @param   string  $file
+ *
+ * @return  array
+ */
+function getTimeStamps($file)
+{
+    return array(
+        'created' => date(BD_DATE_FORMAT, filectime($file)),
+        'timeSinceCreation' => timeSince(filectime($file)),
+        'modified' => date(BD_DATE_FORMAT, filemtime($file)),
+        'timeSinceModified' => timeSince(filemtime($file)),
+    );
 }

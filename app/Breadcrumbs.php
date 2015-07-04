@@ -14,18 +14,29 @@
 class Breadcrumbs {
 
 
+    /**
+     * @var string
+     */
     private $page;
 
-    private $category;
+    /**
+     * @var string
+     */
+    private $category = '';
 
+    /**
+     * @var string
+     */
     private $separator = ' &raquo; ';
 
 
 
     /**
-     * @param $page
+     * Set the current page.
      *
-     * @return $this
+     * @param   string  $page
+     *
+     * @return  $this
      */
     public function setPage($page)
     {
@@ -36,9 +47,11 @@ class Breadcrumbs {
 
 
     /**
-     * @param $category
+     * Set the current category.
      *
-     * @return $this
+     * @param   string  $category
+     *
+     * @return  $this
      */
     public function setCategory($category)
     {
@@ -49,7 +62,9 @@ class Breadcrumbs {
 
 
     /**
-     * @return string
+     * Build the breadcrumbs.
+     *
+     * @return  string
      */
     public function build()
     {

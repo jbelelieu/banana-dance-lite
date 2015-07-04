@@ -30,7 +30,7 @@ class Search {
 
 
     /**
-     * @param string $lang
+     *
      */
     public function __construct()
     {
@@ -56,9 +56,11 @@ class Search {
 
 
     /**
+     * Set the search query.
+     *
      * @param   string  $query
      *
-     * @return $this
+     * @return  $this
      */
     public function setQuery($query)
     {

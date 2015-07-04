@@ -19,6 +19,6 @@ return array(
     // 'home' => 'Index.md',
 
     // http://www.yoursite.com/?l=subcategory_example
-    'subcategory_example' => 'Example_Subcategory/Sample.md',
+    // 'subcategory_example' => 'Example_Subcategory/Sample.md',
 
 );

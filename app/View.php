@@ -50,7 +50,7 @@ class View {
 
 
     /**
-     *
+     * Set the custom variables that will be available on the template.
      *
      * @param   array   $changes
      *
@@ -88,6 +88,8 @@ class View {
 
 
     /**
+     * Get the contents of a view file.
+     *
      * @param   string  $view
      *
      * @return  string

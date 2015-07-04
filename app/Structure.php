@@ -30,7 +30,8 @@ class Structure {
     private $link;
 
     /**
-     *
+     * @param   string  $page
+     * #param   string  $category
      */
     public function __construct($page, $category = '')
     {
@@ -56,7 +57,7 @@ class Structure {
 
 
     /**
-     *
+     * Get the HTML version of the structure.
      */
     public function getHtml()
     {
@@ -103,11 +104,11 @@ class Structure {
     /**
      * Builds a "<ul>" element for use within the views.
      *
-     * @param   $array
+     * @param   array   $array
      *
      * @return  string
      */
-    private function buildUl($array)
+    private function buildUl(array $array)
     {
         $output = array();
 
