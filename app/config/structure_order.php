@@ -1,20 +1,19 @@
 <?php
 
 /**
- * This file allows you to re-order how pages appear within the primary navigation.
  *
- * Simply add the clean name to the array.
  *
- * FILENAME         -> "CLEAN NAME"
- * Country_Codes    -> Country Codes
- * 
- * @author  j-belelieu
- * @date    6/28/15
+ * @author      j-belelieu
+ * @date        6/28/15
+ * @package     Banana Dance Lite
+ * @link        http://www.bananadance.org/
+ * @license     GPL-3.0
+ * @link        http://www.opensource.org/licenses/gpl-3.0.html
  */
 
 return array(
 
-    // 'index',
+    'index.md',
     // 'page2',
     // 'page3',
 

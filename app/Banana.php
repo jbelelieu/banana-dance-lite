@@ -1,7 +1,5 @@
 <?php namespace App;
 
-use \Michelf\MarkdownExtra as Markdown;
-
 /**
  * This is the primary "Controller" for the application.
  *
@@ -13,12 +11,6 @@ use \Michelf\MarkdownExtra as Markdown;
  * @link        http://www.opensource.org/licenses/gpl-3.0.html
  */
 class Banana {
-
-    /**
-     * @var     Markdown    Class that contains the tool for formatting Markdown.
-     *                      Thank you to Michel Fortin (michelf.ca)!
-     */
-    private $markdown;
 
     /**
      * @var     Structure   Class that builds the directory structure.
@@ -34,11 +26,6 @@ class Banana {
      * @var     View
      */
     private $view;
-
-    /**
-     * @var     array
-     */
-    private $structureArray = array();
 
     /**
      * @var     string
@@ -60,11 +47,6 @@ class Banana {
      */
     private $output;
 
-    /**
-     * @var     string
-     */
-    private $internalHeadings;
-
 
     /**
      * @param   string      $page       Name of the page we are loading.
@@ -82,13 +64,12 @@ class Banana {
             $this->determineLanguage();
         }
 
-        $this->markdown = new Markdown();
-        $this->structure = new Structure();
+        $this->structure = new Structure($page, $category);
         $this->breadcrumbs = new Breadcrumbs();
         $this->view = new View();
+        $this->parsePage = new ParsePage();
 
         $this->buildRequest();
-        $this->getStructure();
     }
 
 
@@ -104,7 +85,9 @@ class Banana {
 
 
     /**
+     * Set the page we are requesting.
      *
+     * @param   string  $page
      */
     public function setPage($page)
     {
@@ -178,10 +161,13 @@ class Banana {
      */
     private function getDefaultChanges()
     {
+        $base = \App\getBaseUrl();
+
         return array(
+            'assets' => $base . '/app/views/' . BD_THEME . '/assets',
             'wiki_name' => BD_NAME,
             'wiki_theme' => BD_THEME,
-            'wiki_base_url' => trim(BD_BASE_URL, '/'),
+            'wiki_base_url' => $base,
             'branding_color' => BD_BRANDING_COLOR,
             'languages' => $this->buildLanguages(),
             'query' => '',
@@ -198,11 +184,8 @@ class Banana {
         $languages = '';
 
         $scan = dirname(dirname(__FILE__)) . '/wiki';
+        
         $scan_mirror = dirname(dirname(__FILE__)) . '/app/views/' . BD_THEME;
-
-        $c = (! empty($_GET['c'])) ? htmlentities($_GET['c']) : '';
-
-        $p = (! empty($_GET['p'])) ? htmlentities($_GET['p']) : '';
 
         foreach (scandir($scan) as $item) {
             if (is_dir($scan . '/' . $item) && $item != '.' && $item != '..') {
@@ -211,8 +194,8 @@ class Banana {
                 if (! file_exists($scan_mirror . '/' . $item)) continue;
 
                 $languages .= '<span class="flag">';
-                $languages .= '<a href="' . BD_BASE_URL . '/index.php?c=' . $c . '&p=' . $p . '&lang=' . $item . '">';
-                $languages .= '<img src="' . BD_BASE_URL . '/assets/shared/img/' . $item . '.png" border="0" />';
+                $languages .= '<a href="' . \App\getBaseUrl() . '/index.php?c=' . $this->category . '&p=' . $this->page . '&lang=' . $item . '">';
+                $languages .= '<img src="' . \App\getBaseUrl() . '/app/views/' . BD_THEME . '/assets/img/' . $item . '.png" border="0" />';
                 $languages .= '</a>';
                 $languages .= '</span>';
             }
@@ -223,34 +206,31 @@ class Banana {
 
 
     /**
-     * Get the directory structure.
-     */
-    protected function getStructure()
-    {
-        $this->structureArray = $this->structure->get();
-    }
-
-
-    /**
      * Render the wiki page the user is trying to load.
      */
     public function wiki()
     {
         if (file_exists($this->file)) {
-            $fileData = file_get_contents($this->file);
-            $data = $this->markdown->transform($fileData);
-            $data = $this->getInnerHeadings($data);
+            $data = $this->parsePage
+                ->setRawData(file_get_contents($this->file))
+                ->process()
+                ->getContent();
+
+            $timestamps = \App\getTimeStamps($this->file);
+
             $page = 'page';
         } else {
             $data = '';
-            $innerStructure = '';
+            $timestamps = '';
             $page = 'error';
         }
 
         $changes = array(
             'content' => $data,
-            'innerHeadings' => $this->internalHeadings,
+            'innerHeadings' => $this->parsePage->getHeadings($data),
         );
+
+        if (! empty($timestamps)) $changes = array_merge($changes, $timestamps);
 
         $formatted = $this->view
             ->setPage($page)
@@ -260,67 +240,6 @@ class Banana {
         $this->output = $formatted;
 
         return $this;
-    }
-
-
-    /**
-     * Builds a list of page headings for easy access and internal linking.
-     *
-     * @param   string  $fileData   The page's raw (pre-markdown processed) data.
-     *
-     * @return  string  Final page with added <a name> tags.
-     */
-    public function getInnerHeadings($fileData)
-    {
-        $this->internalHeadings = '<ul id="innerHeadings">';
-
-        $finalPage = '';
-
-        $found = false;
-
-        $exp = explode("\n", $fileData);
-
-        foreach ($exp as $line) {
-
-            $aName = uniqid();
-
-            $check = substr(trim($line), 0, 4);
-
-            if ($check == '<h4>') {
-                $found = true;
-                $title = trim(substr($line, 4));
-                $this->internalHeadings .= '<li class="h4"><a href="#' . $aName . '">' . $title . '</a></li>';
-                $finalPage .= '<a class="anchor" name="' . $aName . '"></a>' . "\n" . $line . "\n";
-            }
-            else if ($check == '<h3>') {
-                $found = true;
-                $title = trim(substr($line, 4));
-                $this->internalHeadings .= '<li class="h3"><a href="#' . $aName . '">' . $title . '</a></li>';
-                $finalPage .= '<a class="anchor" name="' . $aName . '"></a>' . "\n" . $line . "\n";
-            }
-            else if ($check == '<h2>') {
-                $found = true;
-                $title = trim(substr($line, 4));
-                $this->internalHeadings .= '<li class="h2"><a href="#' . $aName . '">' . $title . '</a></li>';
-                $finalPage .= '<a class="anchor" name="' . $aName . '"></a>' . "\n" . $line . "\n";
-            }
-            else if ($check == '<h1>') {
-                $found = true;
-                $title = trim(substr($line, 4));
-                $this->internalHeadings .= '<li class="h1"><a href="#' . $aName . '">' . $title . '</a></li>';
-                $finalPage .= '<a class="anchor" name="' . $aName . '"></a>' . "\n" . $line . "\n";
-            }
-            else {
-                $finalPage .= $line . "\n";
-            }
-
-        }
-
-        $this->internalHeadings .= '</ul>';
-
-        if (! $found) $this->internalHeadings = '';
-
-        return $finalPage;
     }
 
 

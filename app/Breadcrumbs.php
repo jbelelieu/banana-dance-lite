@@ -14,18 +14,29 @@
 class Breadcrumbs {
 
 
+    /**
+     * @var string
+     */
     private $page;
 
-    private $category;
+    /**
+     * @var string
+     */
+    private $category = '';
 
+    /**
+     * @var string
+     */
     private $separator = ' &raquo; ';
 
 
 
     /**
-     * @param $page
+     * Set the current page.
      *
-     * @return $this
+     * @param   string  $page
+     *
+     * @return  $this
      */
     public function setPage($page)
     {
@@ -36,9 +47,11 @@ class Breadcrumbs {
 
 
     /**
-     * @param $category
+     * Set the current category.
      *
-     * @return $this
+     * @param   string  $category
+     *
+     * @return  $this
      */
     public function setCategory($category)
     {
@@ -49,7 +62,9 @@ class Breadcrumbs {
 
 
     /**
-     * @return string
+     * Build the breadcrumbs.
+     *
+     * @return  string
      */
     public function build()
     {
@@ -63,30 +78,28 @@ class Breadcrumbs {
 
         $up = 0;
         foreach ($pieces as $item) {
+            if (empty($item)) continue;
+
             $up++;
 
             $temp[] = $item;
 
-            $finalItem = '';
+            // $finalItem = '';
+            // if ($up == sizeof($pieces)) $finalItem .= '<a href="' . BD_BASE_URL . '?c=' . $this->category . '&p=' . $this->page . '">';
+            $checkForName = ltrim(implode('/', $temp), '/');
+            // $finalItem .= \App\findName($checkForName);
+            // if ($up == sizeof($pieces)) $finalItem .= '</a>';
 
-            if ($up == sizeof($pieces)) $finalItem .= '<a href="' . BD_BASE_URL . '?c=' . $this->category . '&p=' . $this->page . '">';
-
-            $checkForName = implode('/', $temp);
-
-            $finalItem .= \App\findName($checkForName);
-
-            if ($up == sizeof($pieces)) $finalItem .= '</a>';
-
-            $format[] = $finalItem;
+            $format[] = \App\findName($checkForName);
         }
 
-        $ret = '<a href="' . BD_BASE_URL . '">' . BD_NAME . '</a>' . $this->separator;
+        $ret = '<a href="' . \App\getBaseUrl() . '">' . BD_NAME . '</a>';
 
         // Homepage
-        if (sizeof($format) == 2) {
-            return $ret . $format['1'];
+        if (sizeof($format) == 1) {
+            return $ret . $this->separator . $format['0'];
         } else {
-            return $ret . implode($this->separator, $format);
+            return $ret . $this->separator . implode($this->separator, $format);
         }
     }
 

@@ -20,6 +20,7 @@ if (BD_DEBUG) {
 
 $nameMap = require_once dirname(__FILE__) . '/config/structure_names.php';
 
+
 /**
  * Build a link that can be used by the program.
  *
@@ -48,7 +49,7 @@ function findName($page, $lang = '')
 {
     global $nameMap;
 
-    if (empty($lang)) $lang = \App\getLanguage();
+    if (empty($lang)) $lang = getLanguage();
 
     $useMap = $nameMap[$lang];
 
@@ -72,4 +73,74 @@ function getLanguage()
     if (! empty($_SESSION['bd_language'])) return $_SESSION['bd_language'];
 
     return BD_DEFAULT_LANGUAGE;
+}
+
+
+
+/**
+ * Get the base URL to use on the wiki.
+ */
+function getBaseUrl()
+{
+    if (! empty(BD_BASE_URL)) {
+        return BD_BASE_URL;
+    } else {
+        $path = pathinfo($_SERVER['PHP_SELF']);
+
+        if ($path['dirname'] == '/') return '';
+
+        return $path['dirname'];
+    }
+}
+
+
+
+/**
+ * Get the time since a date.
+ *
+ * @param   int     $time   PHP time() value.
+ *
+ * @return  string
+ */
+function timeSince($time)
+{
+    $time = time() - $time;
+
+    $tokens = array (
+        31536000 => 'year',
+        2592000 => 'month',
+        604800 => 'week',
+        86400 => 'day',
+        3600 => 'hour',
+        60 => 'minute',
+        1 => 'second'
+    );
+
+    foreach ($tokens as $unit => $text) {
+        if ($time < $unit) continue;
+
+        $numberOfUnits = floor($time / $unit);
+
+        return $numberOfUnits . ' ' . $text . (($numberOfUnits > 1) ? 's' : '');
+    }
+}
+
+
+
+
+/**
+ * Get timestamps for a wiki file.
+ *
+ * @param   string  $file
+ *
+ * @return  array
+ */
+function getTimeStamps($file)
+{
+    return array(
+        'created' => date(BD_DATE_FORMAT, filectime($file)),
+        'timeSinceCreation' => timeSince(filectime($file)),
+        'modified' => date(BD_DATE_FORMAT, filemtime($file)),
+        'timeSinceModified' => timeSince(filemtime($file)),
+    );
 }

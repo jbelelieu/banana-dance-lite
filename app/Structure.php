@@ -24,12 +24,19 @@ class Structure {
      */
     private $orderMap = array();
 
+    /**
+     * @var string
+     */
+    private $link;
 
     /**
-     *
+     * @param   string  $page
+     * #param   string  $category
      */
-    public function __construct()
+    public function __construct($page, $category = '')
     {
+        $this->link = (! empty($category)) ? $category . '/' . $page : $page;
+
         $wikiDir = dirname(dirname(__FILE__)) . '/wiki/' . \App\getLanguage();
 
         $this->orderMap = include dirname(dirname(__FILE__)) . '/app/config/structure_order.php';
@@ -50,7 +57,7 @@ class Structure {
 
 
     /**
-     *
+     * Get the HTML version of the structure.
      */
     public function getHtml()
     {
@@ -81,12 +88,14 @@ class Structure {
             $componentArray = $this->buildLinkComponents($path);
 
             if (is_dir($dir . DIRECTORY_SEPARATOR . $node)) {
-                $contents[$node] = $this->build($path);
+                $contents[$node] = $this->build($path); // $name
             } else {
-                $contents[$name] = \App\buildLink($componentArray, $node);
+                $contents[$node] = \App\buildLink($componentArray, $node);
             }
 
         }
+
+        $contents = $this->sortArray($contents);
 
         return $contents;
     }
@@ -95,19 +104,17 @@ class Structure {
     /**
      * Builds a "<ul>" element for use within the views.
      *
-     * @param   $array
+     * @param   array   $array
      *
      * @return  string
      */
-    private function buildUl($array)
+    private function buildUl(array $array)
     {
-        $ordered = $this->sortArray($array);
-
         $output = array();
 
         $out = "<ul>";
 
-        foreach($ordered as $key => $elem) {
+        foreach($array as $key => $elem) {
             if (! is_array($elem)) {
                 parse_str($elem, $output);
 
@@ -117,9 +124,15 @@ class Structure {
                     $check = $output['p'];
                 }
 
+                if ($check == $this->link) {
+                    $class = 'active';
+                } else {
+                    $class = '';
+                }
+
                 $key = \App\findName($check);
 
-                $out .= "<li><a href=\"" . $elem . "\">" . $key . "</a></li>";
+                $out .= "<li class=\"$class\"><a href=\"" . $elem . "\">" . $key . "</a></li>";
             }
             else {
                 $out .= "<li><span class=\"subTitle\">" . $key . "</span>" . $this->buildUl($elem) . "</li>";
