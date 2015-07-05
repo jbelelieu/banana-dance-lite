@@ -76,26 +76,18 @@ class Breadcrumbs {
 
         $temp = array();
 
-        $up = 0;
         foreach ($pieces as $item) {
             if (empty($item)) continue;
 
-            $up++;
-
             $temp[] = $item;
 
-            // $finalItem = '';
-            // if ($up == sizeof($pieces)) $finalItem .= '<a href="' . BD_BASE_URL . '?c=' . $this->category . '&p=' . $this->page . '">';
             $checkForName = ltrim(implode('/', $temp), '/');
-            // $finalItem .= \App\findName($checkForName);
-            // if ($up == sizeof($pieces)) $finalItem .= '</a>';
 
             $format[] = \App\findName($checkForName);
         }
 
         $ret = '<a href="' . \App\getBaseUrl() . '">' . BD_NAME . '</a>';
 
-        // Homepage
         if (sizeof($format) == 1) {
             return $ret . $this->separator . $format['0'];
         } else {

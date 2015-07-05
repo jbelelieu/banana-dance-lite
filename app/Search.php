@@ -34,7 +34,7 @@ class Search {
      */
     public function __construct()
     {
-        $this->setSearchDir();
+        $this->searchDir = dirname(dirname(__FILE__)) . '/wiki/' . \App\getLanguage();
     }
 
 
@@ -47,9 +47,9 @@ class Search {
      */
     public function setSearchDir($dir = '')
     {
-        $this->searchDir = dirname(dirname(__FILE__)) . '/wiki/' . \App\getLanguage();
+        $check = $this->searchDir . '/' . trim($dir, '/');
 
-        if (! empty($dir)) $this->searchDir .= '/' . trim($dir, '/');
+        if (file_exists($check)) $this->searchDir = $check;
 
         return $this;
     }
@@ -105,6 +105,7 @@ class Search {
 
             $contents = file_get_contents($file);
 
+            // This is so ugly it hurts. One day I will fix this nonsense.
             if (stripos($contents, $this->query) !== false) {
                 $find = preg_match('/' . $pattern . $this->query . $pattern . '/i', $contents, $m);
                 if ($find) {

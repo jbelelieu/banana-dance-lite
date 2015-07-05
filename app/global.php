@@ -18,7 +18,7 @@ if (BD_DEBUG) {
     ini_set('display_errors', 1);
 }
 
-$nameMap = require_once dirname(__FILE__) . '/config/structure_names.php';
+$nameMap = include dirname(dirname(__FILE__)) . '/wiki/config/structure_names.php';
 
 
 /**
@@ -49,7 +49,7 @@ function findName($page, $lang = '')
 {
     global $nameMap;
 
-    if (empty($lang)) $lang = getLanguage();
+    if (empty($lang)) $lang = \App\getLanguage();
 
     $useMap = $nameMap[$lang];
 
@@ -82,15 +82,15 @@ function getLanguage()
  */
 function getBaseUrl()
 {
-    if (! empty(BD_BASE_URL)) {
-        return BD_BASE_URL;
-    } else {
-        $path = pathinfo($_SERVER['PHP_SELF']);
+    $base = BD_BASE_URL;
 
-        if ($path['dirname'] == '/') return '';
+    if (! empty($base)) return $base;
 
-        return $path['dirname'];
-    }
+    $path = pathinfo($_SERVER['PHP_SELF']);
+
+    if ($path['dirname'] == '/') return '';
+
+    return $path['dirname'];
 }
 
 

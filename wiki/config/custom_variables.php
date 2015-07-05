@@ -17,6 +17,13 @@
 
 return array(
 
-	// 'custom_variable' => 'Something to show on a page.',
+    'en' => array(
+        'bd_name' => 'Banana Dance Lite',
+        // 'my_custom_variable' => 'What will be displayed on the view',
+    ),
+
+    //'fr' => array(
+    //    'my_custom_variable' => 'Quel sera affiché sur la vue',
+    //),
 
 );

@@ -1,8 +1,8 @@
 <?php namespace App;
 
 /**
- * Generates a view.
- * 
+ * Light-weight view generation tool.
+ *
  * @author      jbelelieu
  * @date        6/28/15
  * @package     Banana Dance Lite
@@ -36,6 +36,8 @@ class View {
 
 
     /**
+     * Set the view (template) we are working with.
+     *
      * @param   string  $view
      *
      * @return  $this
@@ -65,6 +67,8 @@ class View {
 
 
     /**
+     * Force a change into the set of available view replacements.
+     *
      * @param   string  $key
      * @param   string  $value
      */
@@ -98,13 +102,21 @@ class View {
     {
         $theFile = dirname(dirname(__FILE__)) . '/app/views/' . BD_THEME . '/' . \App\getLanguage() . '/' . $view . '.phtml';
 
-        if (! file_exists($theFile))
+        if (! file_exists($theFile)) {
             $theFile = dirname(dirname(__FILE__)) . '/app/views/' . BD_THEME . '/en/' . $view . '.phtml';
+        }
 
         ob_start();
+        $var = $this->changes;
         include($theFile);
         $content = ob_get_contents();
         ob_end_clean();
+
+        // We need to process the content variable before
+        // we process everything else.
+        if (isset($this->changes['content'])) {
+            $content = str_replace('{{ content }}', $this->changes['content'], $content);
+        }
 
         return $content;
     }
@@ -119,32 +131,51 @@ class View {
      */
     private function replacements($content)
     {
+        $finalChanges = $this->appendFixedVariables($this->changes);
+
         preg_match_all('#\{\{(.*?)\}\}#', $content, $matches);
 
         foreach ($matches[0] as $variable) {
             $clean = str_replace('{', '', $variable);
             $clean = trim(str_replace('}', '', $clean));
 
-            if (array_key_exists($clean, $this->changes))
-                $content = str_replace($variable, $this->changes[$clean], $content);
-        }
-
-        // Re-do for fixed variables.
-        $fixed = include dirname(dirname(__FILE__)) . '/app/config/custom_variables.php';
-
-        if (! empty($fixed)) {
-            preg_match_all('#\{\{(.*?)\}\}#', $content, $matches);
-
-            foreach ($matches[0] as $variable) {
-                $clean = str_replace('{', '', $variable);
-                $clean = trim(str_replace('}', '', $clean));
-
-                if (array_key_exists($clean, $fixed))
-                    $content = str_replace($variable, $fixed[$clean], $content);
+            if (array_key_exists($clean, $finalChanges)) {
+                $content = str_replace($variable, $finalChanges[$clean], $content);
             }
         }
 
         return $content;
+    }
+
+
+    /**
+     * @param   array   $changes
+     *
+     * @return  bool
+     */
+    private function appendFixedVariables(array $changes)
+    {
+        $lang = \App\getLanguage();
+
+        $fixed = include dirname(dirname(__FILE__)) . '/wiki/config/custom_variables.php';
+
+        if (empty($fixed[$lang])) return $changes;
+
+        $useFixed = $fixed[$lang];
+
+        // If the user requested a language other than english but there
+        // are no entries for that language, try to default to english.
+        if (empty($useFixed) && $lang != BD_DEFAULT_LANGUAGE) {
+            if (empty($fixed[BD_DEFAULT_LANGUAGE])) return false;
+
+            $useFixed = $fixed[BD_DEFAULT_LANGUAGE];
+        }
+
+        if (! empty($useFixed)) {
+            return array_merge($changes, $useFixed);
+        } else {
+            return $changes;
+        }
     }
 
 }

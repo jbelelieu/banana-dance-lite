@@ -1,10 +1,7 @@
 <?php
 
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
 require "vendor/autoload.php";
-require "app/config/config.php";
+require "config.php";
 require "app/global.php";
 
 /**
@@ -34,6 +31,12 @@ if (! empty($requestedLink)) {
     $routes = require "app/config/named_routes.php";
 
     if (array_key_exists($requestedLink, $routes)) {
+
+        if (substr($routes[$requestedLink], 0, 4) == 'http') {
+            header('Location: ' . $routes[$requestedLink]);
+            exit;
+        }
+
         $link = explode('/', $routes[$requestedLink]);
 
         $page = array_pop($link);

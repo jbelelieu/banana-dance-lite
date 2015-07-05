@@ -20,10 +20,10 @@
 
 return array(
 
-    // http://www.yoursite.com/?l=home
-    // 'home' => 'Index.md',
+    'bd_docs' => 'http://www.bananadance.org/docs',
 
-    // http://www.yoursite.com/?l=subcategory_example
-    // 'subcategory_example' => 'Example_Subcategory/Sample.md',
+    // Create a link anywhere on your pages that reads:
+    // ?l=subcategory_example
+    'subcategory_example' => 'Example_Subcategory/Sample.md',
 
 );

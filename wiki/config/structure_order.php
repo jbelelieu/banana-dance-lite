@@ -14,7 +14,7 @@
 return array(
 
     'index.md',
-    // 'page2',
+    'Example_Subcategory/Sample.md',
     // 'page3',
 
 );

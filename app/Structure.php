@@ -39,7 +39,7 @@ class Structure {
 
         $wikiDir = dirname(dirname(__FILE__)) . '/wiki/' . \App\getLanguage();
 
-        $this->orderMap = include dirname(dirname(__FILE__)) . '/app/config/structure_order.php';
+        $this->orderMap = include dirname(dirname(__FILE__)) . '/wiki/config/structure_order.php';
 
         $this->nav = $this->build($wikiDir);
     }
@@ -79,10 +79,8 @@ class Structure {
         $contents = array();
 
         foreach (scandir($dir) as $node) {
-
             if (substr($node, 0, 1) == '.')  continue;
 
-            $name = $this->cleanName($node);
             $path = $dir . DIRECTORY_SEPARATOR . $node;
 
             $componentArray = $this->buildLinkComponents($path);
@@ -92,7 +90,6 @@ class Structure {
             } else {
                 $contents[$node] = \App\buildLink($componentArray, $node);
             }
-
         }
 
         $contents = $this->sortArray($contents);
@@ -159,13 +156,20 @@ class Structure {
         $ordered = array();
 
         foreach($this->orderMap as $key) {
-            if (array_key_exists($key, $array)) {
-                $ordered[$key] = $array[$key];
-                unset($array[$key]);
+
+            $exp = explode('/', $key);
+            $page = array_pop($exp);
+            $categories = implode('/', $exp);
+
+            $find = '?c=' . $categories . '&p=' . $page;
+
+            if ($myKey = array_search($find, $array)) {
+                $ordered[$key] = $array[$myKey];
+                unset($array[$myKey]);
             }
         }
 
-        return $ordered + $array;
+        return array_merge($ordered, $array);
     }
 
 
