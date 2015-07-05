@@ -53,7 +53,17 @@
     <div id="subnav">
         {{ breadcrumbs }}
         <div class="floatRight">
-        {{ languages }}
+
+            <?php
+            foreach ($var['languages'] as $item) {
+                echo '<span class="flag">';
+                echo '<a href="' . $var['wiki_base_url'] . '/?c=' . $var['category'] . '&p=' . $var['page'] . '&lang=' . $item . '">';
+                echo '<img src="' . $var['assets'] . '/img/' . $item . '.png" border="0" />';
+                echo '</a>';
+                echo '</span>';
+            }
+            ?>
+
         </div>
     </div>
     <div class="rightInner">

@@ -1,7 +1,7 @@
 <?php namespace App;
 
 /**
- * This is the primary "Controller" for the application.
+ * Primary "Controller" for the application.
  *
  * @author      jbelelieu
  * @date        6/28/15
@@ -88,19 +88,29 @@ class Banana {
      * Set the page we are requesting.
      *
      * @param   string  $page
+     *
+     * @return  $this
      */
     public function setPage($page)
     {
         $this->page = htmlentities($page);
+
+        return $this;
     }
 
 
     /**
+     * Set the category of the requested page.
      *
+     * @param   string  $category
+     *
+     * @return  $this
      */
     public function setCategory($category)
     {
         $this->category = htmlentities($category);
+
+        return $this;
     }
 
 
@@ -128,6 +138,8 @@ class Banana {
      */
     protected function setLanguage($lang = '')
     {
+        $lang = substr($lang, 0, 2);
+
         $find = dirname(dirname(__FILE__)) . '/wiki/' . filter_var($lang, FILTER_SANITIZE_STRING);
 
         if (file_exists($find)) $_SESSION['bd_language'] = $lang;
@@ -169,6 +181,9 @@ class Banana {
             'wiki_theme' => BD_THEME,
             'wiki_base_url' => $base,
             'branding_color' => BD_BRANDING_COLOR,
+            'page' => $this->page,
+            'category' => $this->category,
+            'currentLanguage' => \App\getLanguage(),
             'languages' => $this->buildLanguages(),
             'query' => '',
             'navigation' => $this->structure->getHtml(),
@@ -181,23 +196,13 @@ class Banana {
      */
     private function buildLanguages()
     {
-        $languages = '';
+        $languages = array();
 
         $scan = dirname(dirname(__FILE__)) . '/wiki';
-        
-        $scan_mirror = dirname(dirname(__FILE__)) . '/app/views/' . BD_THEME;
 
         foreach (scandir($scan) as $item) {
-            if (is_dir($scan . '/' . $item) && $item != '.' && $item != '..') {
-
-                // The directory must exist in the theme as well.
-                if (! file_exists($scan_mirror . '/' . $item)) continue;
-
-                $languages .= '<span class="flag">';
-                $languages .= '<a href="' . \App\getBaseUrl() . '/index.php?c=' . $this->category . '&p=' . $this->page . '&lang=' . $item . '">';
-                $languages .= '<img src="' . \App\getBaseUrl() . '/app/views/' . BD_THEME . '/assets/img/' . $item . '.png" border="0" />';
-                $languages .= '</a>';
-                $languages .= '</span>';
+            if (is_dir($scan . '/' . $item) && strlen($item) == 2 && $item != '.' && $item != '..') {
+                $languages[] = $item;
             }
         }
 

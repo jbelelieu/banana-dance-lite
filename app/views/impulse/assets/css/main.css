@@ -125,7 +125,7 @@ a.anchor {
 
 #rightSide ul {
     padding: 0 18px;
-    margin: 0 !important;
+    margin: 0 0 12px 0 !important;
 }
 
 #rightSide ul li {
@@ -153,7 +153,7 @@ a.anchor {
 }
 
 #leftSide ul li {
-    padding: 0;
+    padding: 4px 0;
 }
 
 /**
@@ -320,6 +320,7 @@ table {
 }
 
 table th, table td {
+    vertical-align: top;
     padding: 7px 12px;
 }
 

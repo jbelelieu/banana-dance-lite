@@ -1,5 +1,13 @@
+<?php
+if (sizeof($var['innerHeadings']) > 0) {
+    echo '<ul id="innerHeadings">';
+    foreach ($var['innerHeadings'] as $aName => $data) {
+        echo '<li class="' . $data['class'] . '"><a href="#' . $aName . '">' . $data['name'] . '</a></li>';
+    }
+    echo '</ul>';
+}
+?>
 
-{{ innerHeadings }}
 {{ content }}
 
-<p id="timestamps">Created on {{ created }} and last modified {{ timeSinceModified }} ago.</p>
+<p id="timestamps"><!--Created on {{ created }} and-->Last modified {{ timeSinceModified }} ago.</p>
